@@ -24,7 +24,7 @@ public class SecConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable).
-                authorizeHttpRequests(auth -> auth.requestMatchers("/secure/auth").permitAll()
+                authorizeHttpRequests(auth -> auth.requestMatchers("/secure/auth","/jwt/authenticate").permitAll()
                         .anyRequest().authenticated()).
                 httpBasic(withDefaults());
         return http.build();
