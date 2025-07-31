@@ -5,9 +5,12 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import spring.security.security.Service.CustomUserDetailsService;
@@ -38,16 +41,26 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
             userName=jwtUtil.extractToken(token);
 
-            if(userName !=null && SecurityContextHolder.getContext()!=null){
+            if(userName !=null && SecurityContextHolder.getContext().getAuthentication()==null){
 
                 UserDetails userDetails=customUserDetailsService.loadUserByUsername(userName);
 
-                //TODO complete Validating Token
-                jwtUtil.validateToken(userName,userDetails);
+                if(jwtUtil.validateToken(userName,userDetails,token)){
 
-                //TODO Set Authentication Object in security Context
+                    UsernamePasswordAuthenticationToken authToken=new
+                            UsernamePasswordAuthenticationToken(userDetails,null,userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));//extra info to set security
+                    // context holder to get request ip and session details for audit purpose if need
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
         }
+
+        if(SecurityContextHolder.getContext().getAuthentication() !=null){
+            System.out.println("Final Authentication: " + SecurityContextHolder.getContext().getAuthentication().getName());
+        }
+
+        filterChain.doFilter(request,response);
 
     }
 }

@@ -20,7 +20,7 @@ public class AuthController {
     @RequestMapping(value="/authenticate",method = RequestMethod.POST)
     public String generateToken(@RequestBody AuthRequest authRequest){
 
-        //here we are avoidin the security filter chain incase of jwt token authentication
+        //here we are avoiding the security filter chain in case of jwt token authentication
         // after that we directly pass the  username and password to authentication manager to generate usernamePasswordAuthentcationToken to authenticate
         // verifying through userdetails Service( Custom User Details )
 

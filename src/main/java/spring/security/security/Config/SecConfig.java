@@ -1,5 +1,6 @@
 package spring.security.security.Config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -12,6 +13,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import spring.security.security.Filters.JwtAuthFilter;
 import spring.security.security.Service.CustomUserDetailsService;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -19,6 +22,9 @@ import static org.springframework.security.config.Customizer.withDefaults;
 @Configuration
 @EnableWebSecurity
 public class SecConfig {
+
+    @Autowired
+    JwtAuthFilter jwtAuthFilter;
 
     //Here it uses basic authentication
 //    @Bean
@@ -35,9 +41,12 @@ public class SecConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable).
-                authorizeHttpRequests(auth -> auth.requestMatchers("/secure/auth","/jwt/authenticate").permitAll()
+                authorizeHttpRequests(auth -> auth.requestMatchers("/jwt/authenticate").permitAll()
+                        .requestMatchers("/secure/**").authenticated()
                         .anyRequest().authenticated());
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
+
     }
 
     @Bean
