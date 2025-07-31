@@ -45,7 +45,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 //TODO complete Validating Token
                 jwtUtil.validateToken(userName,userDetails);
 
-                //TODO Set Authentication Object in secuirty Context
+                //TODO Set Authentication Object in security Context
             }
         }
 
