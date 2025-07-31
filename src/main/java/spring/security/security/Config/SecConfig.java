@@ -21,12 +21,22 @@ import static org.springframework.security.config.Customizer.withDefaults;
 public class SecConfig {
 
     //Here it uses basic authentication
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//        http.csrf(AbstractHttpConfigurer::disable).
+//                authorizeHttpRequests(auth -> auth.requestMatchers("/secure/auth","/jwt/authenticate").permitAll()
+//                        .anyRequest().authenticated()).
+//                httpBasic(withDefaults());//this guy is responsible for basic authentication filter
+//        return http.build();
+//    }
+
+    // for jwt we remove basic authentication filter but  spring provide default username password authentication filter
+    // before that username password auth filter we are going to implement jwt auth filter
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable).
                 authorizeHttpRequests(auth -> auth.requestMatchers("/secure/auth","/jwt/authenticate").permitAll()
-                        .anyRequest().authenticated()).
-                httpBasic(withDefaults());
+                        .anyRequest().authenticated());
         return http.build();
     }
 
