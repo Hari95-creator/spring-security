@@ -1,5 +1,6 @@
 package spring.security.security.Security.Controller;
 
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +18,7 @@ public class SecurityController {
         return "Hitting Secure";
     }
 
+    @PreAuthorize("hasAuthority='READ_USER'")
     @GetMapping(value="/auth")
     @ResponseBody
     public String SecureAuth(Model model){

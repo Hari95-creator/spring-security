@@ -38,10 +38,14 @@ public class SecConfig {
 
     // for jwt we remove basic authentication filter but  spring provide default username password authentication filter
     // before that username password auth filter we are going to implement jwt auth filter
+
+    //Here i checked for authorisation using request matcher delegating Authorization manager ( hasRoel )
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable).
                 authorizeHttpRequests(auth -> auth.requestMatchers("/jwt/authenticate").permitAll()
+                        .requestMatchers("/secure/data").hasRole("ADMIN")//ARRANGE THE REQUEST FIRST IN ORDER FOR SPECIFIC URL
+                        //BECAUSE IN SPRING FIRST RULE FIRST WIN
                         .requestMatchers("/secure/**").authenticated()
                         .anyRequest().authenticated());
         http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
