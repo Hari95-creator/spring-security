@@ -37,12 +37,12 @@ public class JwtUtil {
     }
 
     private Claims getClaims(String token) {
-        Claims body = Jwts.parserBuilder().
-                setSigningKey(keys).
-                setAllowedClockSkewSeconds(60). //Tells the current time is slightly beyond the expiration time
-                build().                        //do treat as expired
-                parseClaimsJws(token).
-                getBody();
+        Claims body = Jwts.parserBuilder(). // Start parser
+                setSigningKey(keys).// Set key to verify signature
+                setAllowedClockSkewSeconds(60).//If the token expired at 10:00:00, but your server time is 10:00:50, it will still treat the token as valid
+                build(). // Build the parser
+                parseClaimsJws(token).// Parse and validate token
+                getBody(); // Get claims from token
         return body;
     }
 
